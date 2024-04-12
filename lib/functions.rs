@@ -1,7 +1,7 @@
 #![allow(unused_imports)]
 #![allow(clippy::too_many_lines)]
 
-use std::process::ExitCode;
+use std::process::{ExitCode, ExitStatus};
 
 use mlua::prelude::*;
 
@@ -118,7 +118,7 @@ impl<'lua> Functions<'lua> {
                 let _span = tracing::trace_span!("Scheduler::fn_resume").entered();
                 match thread.resume::<_, LuaMultiValue>(args.clone()) {
                     Ok(v) => {
-                        if v.get(0).map(is_poll_pending).unwrap_or_default() {
+                        if v.get(0).is_some_and(is_poll_pending) {
                             // Pending, defer to scheduler and return nil
                             resume_queue.push_item(lua, &thread, args)?;
                             (true, LuaValue::Nil).into_lua_multi(lua)
@@ -174,7 +174,7 @@ impl<'lua> Functions<'lua> {
                     // and only if we get the pending value back we can spawn to async executor
                     match thread.resume::<_, LuaMultiValue>(args.clone()) {
                         Ok(v) => {
-                            if v.get(0).map(is_poll_pending).unwrap_or_default() {
+                            if v.get(0).is_some_and(is_poll_pending) {
                                 spawn_queue.push_item(lua, &thread, args)?;
                             } else {
                                 // Not pending, store the value if thread is done
@@ -230,9 +230,9 @@ impl<'lua> Functions<'lua> {
         let exit_env = lua.create_table_from(vec![
             (
                 "exit",
-                lua.create_function(|lua, code: Option<u8>| {
+                lua.create_function(|lua, code: Option<i32>| {
                     let _span = tracing::trace_span!("Scheduler::fn_exit").entered();
-                    let code = code.map(ExitCode::from).unwrap_or_default();
+                    let code = code.unwrap_or_default();
                     lua.set_exit_code(code);
                     Ok(())
                 })?,

@@ -1,9 +1,7 @@
 #![allow(unused_imports)]
 #![allow(clippy::missing_errors_doc)]
 
-use std::{
-    cell::Cell, future::Future, process::ExitCode, rc::Weak as WeakRc, sync::Weak as WeakArc,
-};
+use std::{cell::Cell, future::Future, rc::Weak as WeakRc, sync::Weak as WeakArc};
 
 use async_executor::{Executor, Task};
 use mlua::prelude::*;
@@ -82,7 +80,7 @@ pub trait LuaSchedulerExt<'lua> {
 
         Panics if called outside of a running [`Scheduler`].
     */
-    fn set_exit_code(&self, code: ExitCode);
+    fn set_exit_code(&self, code: i32);
 
     /**
         Pushes (spawns) a lua thread to the **front** of the current scheduler.
@@ -283,7 +281,7 @@ pub trait LuaSpawnExt<'lua> {
 }
 
 impl<'lua> LuaSchedulerExt<'lua> for Lua {
-    fn set_exit_code(&self, code: ExitCode) {
+    fn set_exit_code(&self, code: i32) {
         let exit = self
             .app_data_ref::<Exit>()
             .expect("exit code can only be set from within an active scheduler");

@@ -37,8 +37,7 @@ pub(crate) async fn run_until_yield<'lua>(
 pub(crate) fn is_poll_pending(value: &LuaValue) -> bool {
     value
         .as_light_userdata()
-        .map(|l| l == Lua::poll_pending())
-        .unwrap_or_default()
+        .is_some_and(|l| l == Lua::poll_pending())
 }
 
 /**
