@@ -167,7 +167,7 @@ impl<'lua> Scheduler<'lua> {
         Gets the exit code for this scheduler, if one has been set.
     */
     #[must_use]
-    pub fn get_exit_code(&self) -> Option<i32> {
+    pub fn get_exit_code(&self) -> Option<u8> {
         self.exit.get()
     }
 
@@ -176,7 +176,7 @@ impl<'lua> Scheduler<'lua> {
 
         This will cause [`Scheduler::run`] to exit immediately.
     */
-    pub fn set_exit_code(&self, code: i32) {
+    pub fn set_exit_code(&self, code: u8) {
         self.exit.set(code);
     }
 

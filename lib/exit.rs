@@ -4,7 +4,7 @@ use event_listener::Event;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Exit {
-    code: Rc<Cell<Option<i32>>>,
+    code: Rc<Cell<Option<u8>>>,
     event: Rc<Event>,
 }
 
@@ -16,12 +16,12 @@ impl Exit {
         }
     }
 
-    pub fn set(&self, code: i32) {
+    pub fn set(&self, code: u8) {
         self.code.set(Some(code));
         self.event.notify(usize::MAX);
     }
 
-    pub fn get(&self) -> Option<i32> {
+    pub fn get(&self) -> Option<u8> {
         self.code.get()
     }
 

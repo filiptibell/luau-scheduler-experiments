@@ -80,7 +80,7 @@ pub trait LuaSchedulerExt<'lua> {
 
         Panics if called outside of a running [`Scheduler`].
     */
-    fn set_exit_code(&self, code: i32);
+    fn set_exit_code(&self, code: u8);
 
     /**
         Pushes (spawns) a lua thread to the **front** of the current scheduler.
@@ -281,7 +281,7 @@ pub trait LuaSpawnExt<'lua> {
 }
 
 impl<'lua> LuaSchedulerExt<'lua> for Lua {
-    fn set_exit_code(&self, code: i32) {
+    fn set_exit_code(&self, code: u8) {
         let exit = self
             .app_data_ref::<Exit>()
             .expect("exit code can only be set from within an active scheduler");

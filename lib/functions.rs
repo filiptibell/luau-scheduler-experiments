@@ -230,7 +230,7 @@ impl<'lua> Functions<'lua> {
         let exit_env = lua.create_table_from(vec![
             (
                 "exit",
-                lua.create_function(|lua, code: Option<i32>| {
+                lua.create_function(|lua, code: Option<u8>| {
                     let _span = tracing::trace_span!("Scheduler::fn_exit").entered();
                     let code = code.unwrap_or_default();
                     lua.set_exit_code(code);
